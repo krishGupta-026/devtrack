@@ -893,8 +893,12 @@ function StatsSection({ stats }: { stats: RepoStats }) {
   return (
     <section id="features" style={{
       padding: '64px clamp(20px,4vw,48px)',
-      display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px,1fr))',
-        gap: 24, borderTop: `1px solid ${BORDER}`,
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(150px,1fr))',
+      gap: 24,
+      maxWidth: 1180,
+      margin: '0 auto',
+      borderTop: `1px solid ${BORDER}`,
     }}>
       {items.map((s, i) => (
         <StatItem key={s.label} value={s.value} label={s.label} delay={i * 80} />
