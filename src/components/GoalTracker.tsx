@@ -503,7 +503,22 @@ export default function GoalTracker() {
             const isAutoSynced = goal.unit === "commits" || goal.unit === "prs";
 
             return (
-              <li key={goal.id} className="relative">
+              <li
+                key={goal.id}
+                className="relative rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card)]"
+                tabIndex={0}
+                aria-label={`Goal: ${goal.title}. ${goal.current} of ${goal.target} ${goal.unit}. ${getCompletionLabel(goal) || "In progress"}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    // Focus the primary action button inside this card
+                    const primaryBtn = e.currentTarget.querySelector<HTMLButtonElement>(
+                      "button:not([disabled])"
+                    );
+                    primaryBtn?.click();
+                  }
+                }}
+              >
                 {activeConfettiGoalId === goal.id && <ConfettiBurst />}
                 <div className="flex justify-between items-center text-sm mb-1">
                   <div className="flex flex-col gap-0.5">
