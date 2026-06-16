@@ -94,7 +94,6 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@9.0.0",
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.28.0",
     "@img/sharp-linux-x64": "^0.35.1",
