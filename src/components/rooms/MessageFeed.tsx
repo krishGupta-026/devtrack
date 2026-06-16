@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-// Note: Adjust this import based on your specific Supabase client setup
+// Note: Keeping this import in case other hooks use it, while using auth-helpers client for component scope
+import { supabase as defaultSupabase } from "@/lib/supabase";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { RoomMessage } from '@/types/rooms';
 
@@ -13,6 +14,9 @@ interface Props {
 }
 
 export default function MessageFeed({ roomId, currentUser, messages, onNewMessages }: Props) {
+  // 🧠 PRIMARY INSTANTIATION: Single client instance scoped to the parent component body
+  const supabase = createClientComponentClient();
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom whenever new messages arrive.
@@ -22,8 +26,9 @@ export default function MessageFeed({ roomId, currentUser, messages, onNewMessag
 
   // Establish Supabase Realtime subscription
   useEffect(() => {
-    const supabase = createClientComponentClient();
-    
+    if (!roomId) return;
+
+    // 🧠 REALTIME SUBSCRIPTION FIX: Utilizes parent scope instance variable to eliminate variable shadowing crashes
     const channel = supabase
       .channel(`realtime:room:${roomId}`)
       .on(
@@ -46,7 +51,7 @@ export default function MessageFeed({ roomId, currentUser, messages, onNewMessag
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId, onNewMessages]);
+  }, [roomId, onNewMessages, supabase]);
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
@@ -99,3 +104,4 @@ export default function MessageFeed({ roomId, currentUser, messages, onNewMessag
     </div>
   );
 }
+
