@@ -10,7 +10,7 @@ import { useHeatmapTheme } from "@/hooks/useHeatmapTheme";
 import { toast } from "sonner";
 import { toPng } from "html-to-image";
 import { Flame, Trophy, Calendar, Zap, Copy, CheckCircle, Medal, Star, Sparkles } from "lucide-react";
-
+import ConfirmModal from "@/components/ConfirmModal";
 
 const DATA_WINDOW_DAYS = 90;
 const dataWindowLabel = `Last ${DATA_WINDOW_DAYS} days`;
@@ -54,6 +54,7 @@ export function useStreakTracker() {
   const [freezeLoading, setFreezeLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [showFreezeConfirm, setShowFreezeConfirm] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -361,6 +362,8 @@ export function useStreakTracker() {
     setCancelling,
     confirmCancel,
     setConfirmCancel,
+    showFreezeConfirm,
+    setShowFreezeConfirm,
     isDownloading,
     setIsDownloading,
     containerRef,
@@ -406,6 +409,8 @@ export default function StreakTracker() {
     setFreezeLoading,
     cancelling,
     confirmCancel,
+    showFreezeConfirm,
+    setShowFreezeConfirm,
     setConfirmCancel,
     isDownloading,
     containerRef,
@@ -801,7 +806,7 @@ export default function StreakTracker() {
               <button
                 type="button"
                 data-testid="streak-freeze-button"
-                onClick={handleApplyFreeze}
+                onClick={() => setShowFreezeConfirm(true)}
                 disabled={freezeLoading || freeze?.hasFreeze}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition ${freezeLoading || freeze?.hasFreeze
                   ? "cursor-not-allowed opacity-50 bg-[var(--accent)]"
@@ -836,6 +841,19 @@ export default function StreakTracker() {
           ) : null}
         </div>
       </div>
+      <ConfirmModal
+      isOpen={showFreezeConfirm}
+      title="❄️ Use a Streak Freeze?"
+      message={`This will consume 1 of your available freezes. Your streak will be protected for today.`}
+      confirmLabel="Yes, Freeze"
+      cancelLabel="Cancel"
+      onConfirm={() => {
+        setShowFreezeConfirm(false);
+        handleApplyFreeze();
+      }}
+      onCancel={() => setShowFreezeConfirm(false)}
+      disabled={freezeLoading}
+    />
     </>
   );
 }
